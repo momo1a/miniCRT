@@ -1,0 +1,18 @@
+ LINUX
+ gcc -m32 -c -fno-builtin -nostdlib -fno-stack-protector entry.c malloc.c stdio.c string.c  printf.c
+ ar -rs minicrt.a malloc.o printf.o stdio.o string.o
+
+WINDOWS 
+cl /c /DWIN32 /GS- entry.c malloc.c printf.c stdio.c string.c 
+lib entry.obj malloc.obj printf.obj stdio.obj string.obj /OUT:minicrt.lib
+
+
+
+TEST
+linux
+gcc -m32 -c -ggdb -fno-builtin -nostdlib -fno-stack-protector testminiCRT.c
+ld -melf_i386 -static -e mini_crt_entry entry.o testminiCRT.o minicrt.a -o test
+
+windows
+cl /c /DWIN32 testminiCRT.c 
+link testminiCRT.obj minicrt.lib kernel32.lib /NODEFAULTLIB /entry:mini_crt_entry
